@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.dto.request.ReviewCreateRequest;
 import com.example.demo.domain.dto.request.SpotRequest;
+import com.example.demo.domain.dto.request.UpdateReviewRequest;
+import com.example.demo.domain.dto.request.UpdateSpotRequest;
 import com.example.demo.domain.dto.response.CreateReviewResponse;
 import com.example.demo.jwt.CustomUserDetails;
 import com.example.demo.service.ReviewService;
@@ -32,5 +34,15 @@ public class ReviewContorller {
     @GetMapping("/review/{id}")
     public CreateReviewResponse getReviewById(@PathVariable Long id) {
         return reviewService.getReview(id);
+    }
+
+    @PostMapping(value = "/user/review/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void update(@PathVariable Long id,
+                       @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                       @RequestPart(required = false) UpdateReviewRequest updateReviewRequest,
+                       @RequestPart(required = false) UpdateSpotRequest updateSpotRequest,
+                       @RequestParam(required = false) List<String> images,
+                       @RequestPart(required = false) List<MultipartFile> newImages) {
+        reviewService.updateReview(id,customUserDetails, updateReviewRequest, updateSpotRequest, images, newImages);
     }
 }

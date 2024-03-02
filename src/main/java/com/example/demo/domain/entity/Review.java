@@ -1,6 +1,8 @@
 package com.example.demo.domain.entity;
 
 import com.example.demo.domain.dto.request.ReviewCreateRequest;
+import com.example.demo.domain.dto.request.UpdateReviewRequest;
+import com.example.demo.domain.dto.request.UpdateSpotRequest;
 import com.example.demo.domain.enums.Companion;
 import com.example.demo.domain.enums.PlaceType;
 import com.example.demo.domain.enums.Weather;
@@ -55,9 +57,30 @@ public class Review extends BaseTimeEntity{
         return LocalDateTime.parse(visitDateTime, formatter);
     }
 
+    public void updateReview(UpdateReviewRequest updateReviewRequest, UpdateSpotRequest updateSpotRequest) {
+        this.title = updateReviewRequest.getTitle();
+        this.content = updateReviewRequest.getContent();
+        this.spot = spot.updateSpot(updateSpotRequest);
+        this.visitDateTime = stringToLocalDateTime(updateReviewRequest.getVisitDateTime());
+        this.weather = Weather.getInstance(updateReviewRequest.getWeather());
+        this.companion = Companion.getInstance(updateReviewRequest.getCompanion());
+        this.placeType = PlaceType.getInstance(updateReviewRequest.getPlaceType());
+
+    }
+
     public void addImage(ReviewPhoto reviewPhoto) {
         reviewPhoto.setReview(this);
         this.images.add(reviewPhoto);
+    }
+
+    public void removeImage(ReviewPhoto reviewPhoto) {
+        this.images.remove(reviewPhoto);
+        reviewPhoto.setReview(null);
+    }
+
+    public void removeAllImages() {
+        images.forEach(reviewPhoto -> reviewPhoto.setReview(null));
+        images.clear();
     }
 
     public void setSpot(Spot spot) {

@@ -1,6 +1,7 @@
 package com.example.demo.domain.entity;
 
 import com.example.demo.domain.dto.request.SpotRequest;
+import com.example.demo.domain.dto.request.UpdateSpotRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -31,8 +32,13 @@ public class Spot extends BaseTimeEntity{
         this.longitude = spotRequest.getLongitude();
     }
 
-    public void addReview(Review review) {
-        review.setSpot(this);
-        reviews.add(review);
+    public Spot updateSpot(UpdateSpotRequest updateSpotRequest) {
+        this.name = updateSpotRequest.getName();
+        this.address = updateSpotRequest.getAddress();
+        this.latitude = updateSpotRequest.getLatitude();
+        this.longitude = updateSpotRequest.getLongitude();
+
+        return this;
     }
+
 }

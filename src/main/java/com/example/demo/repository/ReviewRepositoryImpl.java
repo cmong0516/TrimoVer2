@@ -17,7 +17,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Review getReviewById(Long id) {
+    public Review findReviewById(Long id) {
 
         return jpaQueryFactory.selectFrom(review)
                 .leftJoin(review.users, QUsers.users)
