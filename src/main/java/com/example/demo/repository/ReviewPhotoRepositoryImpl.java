@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.example.demo.domain.entity.QReviewPhoto.reviewPhoto;
 
@@ -22,4 +21,6 @@ public class ReviewPhotoRepositoryImpl implements ReviewPhotoRepository{
                         .and(reviewPhoto.url.in(urls)))
                 .fetch();
     }
+
+
 }

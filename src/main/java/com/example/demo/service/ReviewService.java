@@ -4,10 +4,8 @@ import com.example.demo.domain.dto.request.ReviewCreateRequest;
 import com.example.demo.domain.dto.request.SpotRequest;
 import com.example.demo.domain.dto.request.UpdateReviewRequest;
 import com.example.demo.domain.dto.request.UpdateSpotRequest;
-import com.example.demo.domain.dto.response.CreateReviewResponse;
-import com.example.demo.domain.entity.Review;
-import com.example.demo.domain.entity.ReviewPhoto;
-import com.example.demo.domain.entity.Spot;
+import com.example.demo.domain.dto.response.ReviewResponse;
+import com.example.demo.domain.entity.*;
 import com.example.demo.jwt.CustomUserDetails;
 import com.example.demo.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +25,7 @@ public class ReviewService {
     private final SpotJpaRepository spotJpaRepository;
     private final ReviewRepository reviewRepository;
     private final S3UploadService s3UploadService;
-    private final ReviewPhotoJpaRepository reviewPhotoJpaRepository;
-    private final ReviewPhotoRepository reviewPhotoRepository;
+    private final LikeReviewJpaRepository likeReviewJpaRepository;
 
     @Transactional
     public Long create(CustomUserDetails customUserDetails, ReviewCreateRequest reviewCreateRequest, SpotRequest spotRequest, List<MultipartFile> images) {
@@ -46,9 +43,9 @@ public class ReviewService {
         return review.getId();
     }
 
-    public CreateReviewResponse getReview(Long id) {
+    public ReviewResponse getReview(Long id) {
         Review reviewById = reviewRepository.findReviewById(id);
-        return new CreateReviewResponse(reviewById);
+        return new ReviewResponse(reviewById);
     }
 
     @Transactional
@@ -78,4 +75,6 @@ public class ReviewService {
                 .map(image -> new ReviewPhoto(image, s3UploadService.uploadFile(image)))
                 .forEach(reviewById::addImage);
     }
+
+
 }

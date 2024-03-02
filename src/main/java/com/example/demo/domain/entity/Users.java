@@ -17,7 +17,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Users extends BaseTimeEntity{
+public class Users extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +27,11 @@ public class Users extends BaseTimeEntity{
     private String password;
     private Integer age;
     private Role role;
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
+    private List<LikeReview> likeReviews = new ArrayList<>();
 
     public Users(UserSignupRequest userSignupRequest) {
         this.nickName = userSignupRequest.getNickName();
@@ -52,17 +55,12 @@ public class Users extends BaseTimeEntity{
         this.password = passwordEncoder.encode(this.password);
     }
 
-    public Users updateUser(UpdateUserRequest updateUserRequest,PasswordEncoder passwordEncoder) {
+    public Users updateUser(UpdateUserRequest updateUserRequest, PasswordEncoder passwordEncoder) {
         this.nickName = updateUserRequest.getNickName();
         this.password = updateUserRequest.getPassword();
         this.age = updateUserRequest.getAge();
         encodingPassword(passwordEncoder);
 
         return this;
-    }
-
-    public void addReview(Review review) {
-        review.setUsers(this);
-        this.reviews.add(review);
     }
 }

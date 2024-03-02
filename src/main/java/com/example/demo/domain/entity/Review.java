@@ -7,28 +7,31 @@ import com.example.demo.domain.enums.Companion;
 import com.example.demo.domain.enums.PlaceType;
 import com.example.demo.domain.enums.Weather;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Review extends BaseTimeEntity{
+public class Review extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String content;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.MERGE)
     @JoinColumn(name = "spot_id")
     private Spot spot;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
     @JoinColumn(name = "users_id")
     private Users users;
     private LocalDateTime visitDateTime;
@@ -40,8 +43,11 @@ public class Review extends BaseTimeEntity{
     private PlaceType placeType;
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewPhoto> images = new ArrayList<>();
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    private Set<LikeReview> likeReviews = new HashSet<>();
 
-    public Review(ReviewCreateRequest reviewCreateRequest,Users users, Spot spot) {
+    public Review(ReviewCreateRequest reviewCreateRequest, Users users, Spot spot) {
+
         this.title = reviewCreateRequest.getTitle();
         this.content = reviewCreateRequest.getContent();
         this.spot = spot;
@@ -83,8 +89,9 @@ public class Review extends BaseTimeEntity{
         images.clear();
     }
 
-    public void setSpot(Spot spot) {
-        this.spot = spot;
+    public void addLikeReview(LikeReview likeReview) {
+        likeReview.setReview(this);
+        this.likeReviews.add(likeReview);
     }
 
     public void setUsers(Users users) {
